@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GLOBAL DEAL HUNTER｜全球羊毛情报中心</title>
+<link rel="icon" href="/assets/logo/logo-mark.webp" type="image/webp">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/assets/logo/logo-mark-180.png">
 <!-- SECTION: base-style -->
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -1379,6 +1382,29 @@ function rcRender(){
   if (b) b.addEventListener("click", runRecheck);
 })();
 
+</script>
+
+<!-- SECTION: visit-beacon -->
+<!-- 匿名访问统计：localStorage 生成 visitor_id，仅上报 路径/来源，不采集任何个人身份信息 -->
+<script>
+(function(){
+  try{
+    var key = "wool_vid", vid = localStorage.getItem(key);
+    if(!vid){
+      vid = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID().replace(/-/g, "")
+        : Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(key, vid);
+    }
+    var body = JSON.stringify({vid: vid, path: location.pathname, ref: document.referrer || ""});
+    if(navigator.sendBeacon){
+      navigator.sendBeacon("/api/metrics/hit", new Blob([body], {type: "application/json"}));
+    } else {
+      fetch("/api/metrics/hit", {method: "POST", headers: {"Content-Type": "application/json"},
+        body: body, keepalive: true}).catch(function(){});
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
